@@ -14,13 +14,10 @@ app.get('/ping', (request, response) => {
   response.send('pong');
 });
 app.get('/hello', (request, response) => {
-  console.log('inside hello route...');
-  //render index.ejs
   response.render('index');
 });
 app.get('/books', (request, response) => {
   client.query(`SELECT title, author, image_url FROM books ORDER BY title;`)
-    // .then(result => { response.send(result.rows); })
     .then(results => response.render('index', {books : results.rows}))
     .catch(err => {
       console.error(err);
