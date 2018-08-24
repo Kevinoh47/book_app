@@ -8,13 +8,13 @@
   <link rel="stylesheet" type="text/css" media="screen" href="app.css" />
 </head>
 <body>
-  <h1>Our Books</h1>
+  <%- include('partials/header') %>
   <p>We have <%=books.length %> books.</p>
   <ul>
     <% books.forEach((book) => { %>
-    <li><%= book.title %> : <%= book.author %> <img src="<%=book.image_url%>"/></li>
+    <li><img src="<%=book.image_url%>"/> <em><%= book.title %></em> : <%= book.author %> </li>
     <% } ) %>
   </ul>
-
+  <%- include('partials/footer') %>
 </body>
 </html>
