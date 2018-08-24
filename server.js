@@ -10,12 +10,17 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('./public'));
 
+//landing page route.
+app.get('/', (request, response) => {
+  response.send('<h1>This is Bookish Books\' landing page.</h1>');
+});
+
+//test route.
 app.get('/ping', (request, response) => {
   response.send('pong');
 });
-app.get('/hello', (request, response) => {
-  response.render('index');
-});
+
+//books list route.
 app.get('/books', (request, response) => {
   client.query(`SELECT title, author, image_url FROM books ORDER BY title;`)
     .then(results => response.render('index', {books : results.rows}))
