@@ -1,9 +1,10 @@
 require ('dotenv').config();
-const pg = require('pg');
-const express = require('express');
 const PORT = process.env.PORT;
+const express = require('express');
 const app = express();
+const pg = require('pg');
 const client = new pg.Client(process.env.DATABASE_URL);
+
 client.connect();
 
 app.set('view engine', 'ejs');
@@ -12,7 +13,7 @@ app.use(express.static('./public'));
 
 //landing page route.
 app.get('/', (request, response) => {
-  response.send('<h1>This is Bookish Books\' landing page.</h1>');
+  response.send('<h1>This is Best Books\' landing page.</h1>');
 });
 
 //test route.
