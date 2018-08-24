@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Page Title</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" media="screen" href="app.css" />
-</head>
-<body>
-  <%- include('partials/header') %>
-  <p>We have <%=books.length %> books.</p>
-  <ul>
-    <% books.forEach((book) => { %>
-    <li><img src="<%=book.image_url%>"/> <em><%= book.title %></em> : <%= book.author %> </li>
-    <% } ) %>
-  </ul>
-  <%- include('partials/footer') %>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Best Books</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="app.css" />
+  </head>
+  <body>
+    <%- include('partials/header') %>
+    <p>At Best Books, we have <strong><%=books.length %></strong> books in our collection:</p>
+    <ul>
+      <% books.forEach((book) => { %>
+      <li><img src="<%=book.image_url%>"/></li>
+      <li><em><%= book.title %></em></li>
+      <li><%= book.author %> </li></li>
+      <% } ) %>
+    </ul>
+    <%- include('partials/footer') %>
+  </body>
 </html>
