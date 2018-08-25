@@ -5,6 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Best Books</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="pubic/styles/normalize.css">
+    <link rel="stylesheet" href="pubic/styles/base.css">
+    <link rel="stylesheet" href="pubic/styles/icons.css">
+    <link rel="stylesheet" href="pubic/styles/layout.css">
+    <link rel="stylesheet" href="pubic/styles/modules.css">
+    <link rel="icon" type="image/x-icon" href="https://avatars2.githubusercontent.com/u/18607604?v=3&s=200">
     <link rel="stylesheet" type="text/css" media="screen" href="app.css" />
   </head>
   <body>
@@ -14,7 +20,8 @@
       <% books.forEach((book) => { %>
       <li><img src="<%=book.image_url%>"/></li>
       <li><em><%= book.title %></em></li>
-      <li><%= book.author %> </li></li>
+      <li><%= book.author %> </li>
+      <li><a href='/books/<%= book.id %>' class='book-details'>Details</a></li>
       <% } ) %>
     </ul>
     <%- include('partials/footer') %>
