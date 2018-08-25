@@ -15,7 +15,6 @@ app.set('view engine', 'ejs');
 app.use(express.static('./public'));
 
 //callbacks
-//Books callback
 const books = (request, response) => {
   client.query(`SELECT image_url, title, author, id FROM books ORDER BY title;`)
     .then(results => response.render('index', {books : results.rows}))
@@ -24,7 +23,7 @@ const books = (request, response) => {
       response.status(500).send(err);
     });
 };
-//bookDetails callback
+
 const bookDetails = (request, response) => {
   let sql = `SELECT image_url, title, author, isbn, description FROM books WHERE id = $1`;
   let values = [request.params.id];
@@ -38,7 +37,6 @@ const bookDetails = (request, response) => {
 };
 
 //routes
-
 app.get('/', (request, response) => { response.redirect('/books');});
 
 app.get('/books', books);
@@ -48,6 +46,7 @@ app.get('/books/:id', bookDetails);
 //404
 app.use('*', (request, response) => {response.render('pages/error');});
 
+//listener
 app.listen(PORT, () => console.log('listening on PORT',PORT));
 
 
