@@ -23,10 +23,22 @@ app.get('/ping', (request, response) => {
 
 //books list route.
 app.get('/books', (request, response) => {
-  client.query(`SELECT title, author, image_url FROM books ORDER BY title;`)
+  client.query(`SELECT image_url, title, author, id FROM books ORDER BY title;`)
     .then(results => response.render('index', {books : results.rows}))
     .catch(err => {
       console.error(err);
+      response.status(500).send(err);
+    });
+});
+
+app.get('/books/:id', (request, response) => {
+  let sql = `SELECT image_url, title, author, isbn, description FROM books WHERE id = $1`;
+  let values = [request.params.id];
+  client.query(sql, values)
+    .then(
+      results => response.render('pages/show', {books : results.rows}))
+    .catch(err => {
+      console.log(err);
       response.status(500).send(err);
     });
 });

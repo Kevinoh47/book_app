@@ -5,19 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Best Books</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="app.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="../app.css" />
   </head>
   <body>
-    <%- include('partials/header') %>
-    <p>At Best Books, we have <strong><%=books.length %></strong> books in our collection:</p>
+    <%- include('../partials/header') %>
     <ul>
       <% books.forEach((book) => { %>
       <li><img src="<%=book.image_url%>"/></li>
       <li><em><%= book.title %></em></li>
       <li><%= book.author %> </li>
-      <li><a href='/books/<%= book.id %>' class='book-details'>Details</a></li>
+      <li><%= book.isbn %> </li>
+      <li><%= book.description %></li>
       <% } ) %>
     </ul>
-    <%- include('partials/footer') %>
+    <p>
+      <a href='/books'>Return to Books List</a>
+    </p>
+    <%- include('../partials/footer') %>
   </body>
 </html>
