@@ -2,7 +2,14 @@ require ('dotenv').config();
 const express = require('express');
 const app = express();
 const pg = require('pg');
-const client = new pg.Client(process.env.DATABASE_URL);
+//for Mac
+// const client = new pg.Client(process.env.DATABASE_URL);
+//for PC
+const conString = 'postgres://postgres:My1004CF@localhost:5432/books_app'; 
+
+const client = new pg.Client(conString);
+
+
 const PORT = process.env.PORT;
 
 client.connect();
