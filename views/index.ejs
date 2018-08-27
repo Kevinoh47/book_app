@@ -3,15 +3,21 @@
   <%-include('partials/head') %>
   <body>
     <%- include('partials/header') %>
-    <p>At Best Books, we have <strong><%=books.length %></strong> books in our collection:</p>
-    <ul>
-      <% books.forEach((book) => { %>
-      <li><img src="<%=book.image_url%>"/></li>
-      <li><em><%= book.title %></em></li>
-      <li><%= book.author %> </li>
-      <li><a href='/books/<%= book.id %>' class='book-details'>Details</a></li>
-      <% } ) %>
-    </ul>
+    <div id="page-header">
+      <h2>Saved Books</h2>
+    </div>
+    <div id="page">
+      <ul>
+          <% books.forEach((book) => { %>
+          <div class="book-info">
+            <li class="book-image"><img src="<%=book.image_url%>"/></li>
+            <li class="book-title"><em><strong><%= book.title %></strong></em></li>
+            <li class="book-author"><%= book.author %> </li>
+            <li class="book-details"><a href='/books/<%= book.id %>'>Details</a></li>
+          </div>
+          <% } ) %>
+        </ul>
+    </div>
     <%- include('partials/footer') %>
   </body>
 </html>
