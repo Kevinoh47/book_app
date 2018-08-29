@@ -59,14 +59,12 @@ function bookDetails (request, response) {
 }
 
 function addBook (request, response) {
-  console.log('inside new callback...', request.body);
   let {title, author, isbn, image_url, description} = request.body;
   console.log(title, author);
   let sql = `INSERT INTO books(title, author, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5);`;
   let values = [title, author, isbn, image_url, description];
   return client.query(sql, values)
-    .then(response.redirect('/books'))
-    .then(app.get('/books'))
+    .then(response.redirect('/books')) //how would it know whether to do a get books or a post books ???
     .catch(err => {
       console.error(err);
       response.status(500).send(err);
