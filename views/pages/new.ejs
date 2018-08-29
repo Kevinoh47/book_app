@@ -7,7 +7,7 @@
       <h2>Add a Book</h2>
     </div>
     <div id="page">
-      <form id="add-book" action="/books" method="post"></form>
+      <form id="add-book" action="/books" method="post" novalidate>
         <p>
           <label>Title</label><br>
           <input type="text" name="title" required>
@@ -18,7 +18,7 @@
         </p>
         <p>
           <label>ISBN</label><br>
-          <input type="text" name="isbn" required>
+          <input type="text" name="isbn">
         </p>
         <p>
           <label>Details</label><br>
@@ -35,5 +35,4 @@
     </div>
     <%- include('../partials/footer') %>
   </body>
-
 </html>
