@@ -50,7 +50,7 @@ function bookDetails (request, response) {
   let sql = `SELECT image_url, title, author, isbn, description FROM books WHERE id = $1`;
   let values = [request.params.id];
   client.query(sql, values)
-    .then(results => response.render('pages/show', {books : results.rows}))
+    .then(results => response.render('pages/show', {books : results.rows, message: ''}))
     .catch(err => {
       console.log(err);
       response.status(500).send(err);
@@ -73,11 +73,13 @@ function addBook (request, response) {
 
 function getIdFromISBN(request, response) {
   let isbn = request.body.isbn;
-  let sql = `SELECT id FROM books WHERE isbn=$1`;
+  let sql = `SELECT id, image_url, title, author, isbn, description FROM books WHERE isbn=$1`;
   let values = [isbn];
   client.query(sql, values)
     .then(results => {
-      response.redirect(`/books/${results.rows[0].id}`);
+      //response.redirect(`/books/${results.rows[0].id}`, {message: 'you added a book'});
+      //console.log("RESULTSROWS", results.rows);
+      response.render('pages/show', {books : results.rows, message: 'you added a book!'});
     })
     .catch(err => {
       console.error(err);
