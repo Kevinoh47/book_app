@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <%-include('../partials/head') %>
+  <body>
+    <%- include('../partials/header') %>
+    <div id="page-header">
+      <h2>Find a Book</h2>
+      <h3>Search through your collection by Title or Author.</h3>
+    </div>
+    <div id="page">
+      <form id="find-book" action="/find" method="post" novalidate>
+        <p>
+          <label>Title</label><br>
+          <input type="text" name="title" >
+        </p>
+        <p>
+          <label>Author</label><br>
+          <input type="text" name="author" >
+        </p>
+        <p>
+          <button name="submit_button" type="submit">Submit</button>
+        </p>
+      </form> 
+    </div>
+    <%- include('../partials/footer') %>
+  </body>
+</html>
