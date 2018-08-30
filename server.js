@@ -50,8 +50,7 @@ function bookDetails (request, response) {
   let sql = `SELECT image_url, title, author, isbn, description FROM books WHERE id = $1`;
   let values = [request.params.id];
   client.query(sql, values)
-    .then(
-      results => response.render('pages/show', {books : results.rows}))
+    .then(results => response.render('pages/show', {books : results.rows}))
     .catch(err => {
       console.log(err);
       response.status(500).send(err);
@@ -60,11 +59,26 @@ function bookDetails (request, response) {
 
 function addBook (request, response) {
   let {title, author, isbn, image_url, description} = request.body;
-  console.log(title, author);
   let sql = `INSERT INTO books(title, author, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5);`;
   let values = [title, author, isbn, image_url, description];
-  return client.query(sql, values)
-    .then(response.redirect('/books')) //how would it know whether to do a get books or a post books ???
+  client.query(sql, values)
+    .then(
+      getIdFromISBN(request,response)
+    )
+    .catch(err => {
+      console.error(err);
+      response.status(500).send(err);
+    });
+}
+
+function getIdFromISBN(request, response) {
+  let isbn = request.body.isbn;
+  let sql = `SELECT id FROM books WHERE isbn=$1`;
+  let values = [isbn];
+  client.query(sql, values)
+    .then(results => {
+      response.redirect(`/books/${results.rows[0].id}`);
+    })
     .catch(err => {
       console.error(err);
       response.status(500).send(err);
