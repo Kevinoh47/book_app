@@ -63,14 +63,14 @@ function findBook (request, response) {
   let title = `${request.body.title}`, author = `${request.body.author}`;
 
   if (request.body.title) {
-    sql += ` WHERE title LIKE ('%${title}%')`;
+    sql += ` WHERE title ILIKE ('%${title}%')`;
 
     if (request.body.author) {
-      sql += ` AND author LIKE ('%${author}%')`;
+      sql += ` AND author ILIKE ('%${author}%')`;
     }
   }
   else if (request.body.author) {
-    sql += ` WHERE author LIKE ('%${author}%')`;
+    sql += ` WHERE author ILIKE ('%${author}%')`;
   }
 
   sql += `;`;
