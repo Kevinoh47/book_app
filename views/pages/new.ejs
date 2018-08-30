@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <%-include('../partials/head') %>
+  <body>
+    <%- include('../partials/header') %>
+    <div id="page-header">
+      <h2>Add a Book</h2>
+    </div>
+    <div id="page">
+      <form id="add-book" action="/books" method="post" novalidate>
+        <p>
+          <label>Title</label><br>
+          <input type="text" name="title" required>
+        </p>
+        <p>
+          <label>Author</label><br>
+          <input type="text" name="author" required>
+        </p>
+        <p>
+          <label>ISBN</label><br>
+          <input type="text" name="isbn">
+        </p>
+        <p>
+          <label>Details</label><br>
+          <input type="text" name="description">
+        </p>
+        <p>
+          <label>Book Image Url</label><br>
+          <input type="text" name="image_url">
+        </p>
+        <p>
+          <button name="submit_button" type="submit">Submit</button>
+        </p>
+      </form> 
+    </div>
+    <%- include('../partials/footer') %>
+  </body>
+</html>
