@@ -3,21 +3,21 @@
   <%-include('../partials/head') %>
   <body>
     <%- include('../partials/header') %>
-    <ul>
-      <% books.forEach((book) => { %>
-      <li><img src="<%=book.image_url%>"/></li>
-      <li><em><%= book.title %></em></li>
-      <li><%= book.author %> </li>
-      <li><%= book.isbn %> </li>
-      <li><%= book.description %></li>
-      <% } ) %>
-    </ul>
-    <p>
-      <strong><em><%= message %></em></strong>
-    </p>
-    <p>
-      <a class='return-to-list' href='/books'>Return to Books List</a>
-    </p>
+      <ul>
+        <% books.forEach((book) => { %>
+        <li><img src="<%=book.image_url%>"/></li>
+        <li><em><%= book.title %></em></li>
+        <li><%= book.author %> </li>
+        <li><%= book.isbn %> </li>
+        <li><%= book.description %></li>
+        <% } ) %>
+      </ul>
+      <p>
+        <strong><em><%= message %></em></strong>
+      </p>
+      <p>
+        <a class='return-to-list' href='/books'>Return to Books List</a>
+      </p>
     <%- include('../partials/footer') %>
   </body>
 </html>

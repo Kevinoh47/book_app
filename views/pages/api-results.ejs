@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <%-include('../partials/head') %>
+  <body>
+    <%- include('../partials/header') %>
+    <main>
+      <h3>Google Search Results</h3>
+      <ul class="search-results">
+        <% results.forEach((book) => { %>
+        <li data-book-id="<%= book.isbn %>"> 
+          <div class="book-container">
+            <img src="<%= book.image_url %>"/>
+            <section>
+              <% if (book.subtitle) { %>
+              <h4><%= book.title %> : <%= book.subtitle %></h4>
+              <% } else { %>
+              <h4><%= book.title %></h4>
+              <% } %>
+              <span><%= book.author %></span>
+              <p class="desc"><%= book.description %></p>
+            </section>
+          </div>
+          <form id="add-book-locally" action="/books" method="post">
+            <input class = "hide-me" type="text" name="title" value="<%= book.title %>">
+            <input class = "hide-me" type="text" name="author" value="<%= book.author %>">
+            <input class = "hide-me" type="text" name="isbn" value="<%= book.isbn %>">
+            <input class = "hide-me" type="text" name="image_url" value="<%= book.image_url %>">
+            <textarea class = "hide-me" name="description" value="<%=book.description %>" cols="30" rows="5"></textarea>
+            <button class="show-me" type="submit">Add to Database</button> 
+            <br>
+          </form>
+        </li>
+        <% } ) %>
+      </ul>
+    </main>
+    <%- include('../partials/footer') %>
+  </body>
+</html>
