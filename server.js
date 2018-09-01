@@ -26,19 +26,20 @@ app.set('view engine', 'ejs');
 app.get('/', (request, response) => { response.redirect('/books');});
 
 app.get('/books', books);
-
 app.post('/books', addBook);
 
 app.get('/books/:id', bookDetails);
 
-app.delete('/books/:id', deleteBook);
-
 app.get('/new', showNewBookForm);
 
+// local app search
 app.get('/find', find);
 app.post('/find', findBook);
 
-//app.get('/delete', showDeleteBookForm);
+// google search
+app.get('/search', apiSearchForm);
+app.post('/search', searchGoogle);
+
 
 // 404
 app.use('*', (request, response) => {response.render('pages/error');});
@@ -83,18 +84,25 @@ function findBook (request, response) {
       response.status(500).send(err);
     });
 }
-function deleteBook (request, response) {
-  let sql = `DELETE FROM books WHERE id = $1`;
-  let values = [request.params.id];
-  client.query(sql, values)
-    .then(results => response.render('pages/show', {books: results.rows, message: 'You deleted a book.'}))
-    .catch(err => {
-      console.log(err);
-      response.status(500).send(err);
-    });
+
+function apiSearchForm(request, response) {
+  response.render('pages/api-search');
 }
+
+function searchGoogle(request, response) {
+  let url = `https://www.googleapis.com/books/v1/volumes`;
+  let query = buildGoogleQuery(request);
+
+  superagent.get(url).query({'q': query})
+    .then(googleResults => googleResults.body.items.map(aGoogleBook => {
+      return mapGoogleBookInfo(aGoogleBook);
+    }))
+    .then(bookInfo => response.render('pages/api-results', {results: bookInfo}))
+    .catch(err => response.render('pages/error', {error: err}));
+}
+
 function bookDetails (request, response) {
-  let sql = `SELECT image_url, title, author, isbn, description FROM books WHERE id = $1`;
+  let sql = `SELECT image_url, title, author, isbn, description, id FROM books WHERE id = $1`;
   let values = [request.params.id];
   client.query(sql, values)
     .then(results => response.render('pages/show', {books : results.rows, message: ''}))
@@ -118,14 +126,19 @@ function addBook (request, response) {
     });
 }
 
+function showNewBookForm (request, response) {
+  response.render('pages/new');
+}
+
+// helper functions
+
 function getIdFromISBN(request, response) {
   let isbn = request.body.isbn;
   let sql = `SELECT id, image_url, title, author, isbn, description FROM books WHERE isbn=$1`;
   let values = [isbn];
   client.query(sql, values)
     .then(results => {
-      //response.redirect(`/books/${results.rows[0].id}`, {message: 'you added a book'});
-      //console.log("RESULTSROWS", results.rows);
+      //response.redirect(`/books/${results.rows[0].id}`, {message: 'you added a book!'});
       response.render('pages/show', {books : results.rows, message: 'you added a book!'});
     })
     .catch(err => {
@@ -134,8 +147,49 @@ function getIdFromISBN(request, response) {
     });
 }
 
-function showNewBookForm (request, response) {
-  response.render('pages/new');
+function parseISBN13 (industryIdentifiers) {
+  let parsedId = '';
+
+  if (industryIdentifiers){
+    industryIdentifiers.forEach(function(current){
+      //console.log('type:', current.type, 'id:', current.identifier);
+      if (current.type === 'ISBN_13') {
+        parsedId = `ISBN_13_${current.identifier}`;
+      }
+    });
+  }
+  //console.log('parsedId', parsedId);
+  return parsedId;
+}
+
+function mapGoogleBookInfo (aGoogleBook) {
+  let {title, subtitle, authors, industryIdentifiers, imageLinks, description} = aGoogleBook.volumeInfo;
+
+  let placeholderImage = `http://books.google.com/books/content?id=X21mDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api`;
+
+  let parsedId = parseISBN13(industryIdentifiers);
+
+  return {
+    title: title ? title : 'no title available',
+    subtitle: subtitle ? subtitle : '',
+    author: authors ? authors[0] : 'no author available',
+    isbn: parsedId ? parsedId : 'no ISBN_13 available',
+    image_url: imageLinks ? imageLinks.thumbnail : placeholderImage,
+    description: description ? description : 'No description available',
+    id: parsedId ? parsedId : '',
+  };
+}
+
+function buildGoogleQuery(request) {
+  let query = ``;
+  let modifiedRequest = request.body.search[0].split(' ').join('+');
+  if (request.body.search[1] === 'title') {
+    query = `+intitle:${modifiedRequest}`;
+  }
+  else if (request.body.search[1] === 'author') {
+    query = `+inauthor:${modifiedRequest}`;
+  }
+  return query;
 }
 
 // listener
