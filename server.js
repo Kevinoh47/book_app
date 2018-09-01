@@ -32,11 +32,11 @@ app.get('/books/:id', bookDetails);
 
 app.get('/new', showNewBookForm);
 
-//local app search
+// local app search
 app.get('/find', find);
 app.post('/find', findBook);
 
-//google search
+// google search
 app.get('/search', apiSearchForm);
 app.post('/search', searchGoogle);
 
@@ -91,39 +91,11 @@ function apiSearchForm(request, response) {
 
 function searchGoogle(request, response) {
   let url = `https://www.googleapis.com/books/v1/volumes`;
-  let query = ``;
-  let modifiedRequest = request.body.search[0].split(' ').join('+');
-  if (request.body.search[1] === 'title') {
-    query = `+intitle:${modifiedRequest}`;
-  }
-  else if (request.body.search[1] === 'author') {
-    query = `+inauthor:${modifiedRequest}`;
-  }
+  let query = buildGoogleQuery(request);
+
   superagent.get(url).query({'q': query})
     .then(googleResults => googleResults.body.items.map(aGoogleBook => {
-      let {title, subtitle, authors, industryIdentifiers, imageLinks, description} = aGoogleBook.volumeInfo;
-
-      let placeholderImage = `http://books.google.com/books/content?id=X21mDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api`;
-
-      let parsedId = '';
-
-      if (industryIdentifiers){
-        industryIdentifiers.forEach(function(current){
-          if (current.type === 'ISBN_13') {
-            parsedId = `ISBN_13_${current.identifier}`;
-          }
-        });
-      }
-
-      return {
-        title: title ? title : 'no title available',
-        subtitle: subtitle ? subtitle : '',
-        author: authors ? authors[0] : 'no author available',
-        isbn: parsedId ? parsedId : 'no ISBN available',
-        image_url: imageLinks ? imageLinks.thumbnail : placeholderImage,
-        description: description ? description : 'No description available',
-        id: parsedId ? parsedId : '',
-      };
+      return mapGoogleBookInfo(aGoogleBook);
     }))
     .then(bookInfo => response.render('pages/api-results', {results: bookInfo}))
     .catch(err => response.render('pages/error', {error: err}));
@@ -154,6 +126,12 @@ function addBook (request, response) {
     });
 }
 
+function showNewBookForm (request, response) {
+  response.render('pages/new');
+}
+
+// helper functions
+
 function getIdFromISBN(request, response) {
   let isbn = request.body.isbn;
   let sql = `SELECT id, image_url, title, author, isbn, description FROM books WHERE isbn=$1`;
@@ -169,8 +147,49 @@ function getIdFromISBN(request, response) {
     });
 }
 
-function showNewBookForm (request, response) {
-  response.render('pages/new');
+function parseISBN13 (industryIdentifiers) {
+  let parsedId = '';
+
+  if (industryIdentifiers){
+    industryIdentifiers.forEach(function(current){
+      //console.log('type:', current.type, 'id:', current.identifier);
+      if (current.type === 'ISBN_13') {
+        parsedId = `ISBN_13_${current.identifier}`;
+      }
+    });
+  }
+  //console.log('parsedId', parsedId);
+  return parsedId;
+}
+
+function mapGoogleBookInfo (aGoogleBook) {
+  let {title, subtitle, authors, industryIdentifiers, imageLinks, description} = aGoogleBook.volumeInfo;
+
+  let placeholderImage = `http://books.google.com/books/content?id=X21mDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api`;
+
+  let parsedId = parseISBN13(industryIdentifiers);
+
+  return {
+    title: title ? title : 'no title available',
+    subtitle: subtitle ? subtitle : '',
+    author: authors ? authors[0] : 'no author available',
+    isbn: parsedId ? parsedId : 'no ISBN_13 available',
+    image_url: imageLinks ? imageLinks.thumbnail : placeholderImage,
+    description: description ? description : 'No description available',
+    id: parsedId ? parsedId : '',
+  };
+}
+
+function buildGoogleQuery(request) {
+  let query = ``;
+  let modifiedRequest = request.body.search[0].split(' ').join('+');
+  if (request.body.search[1] === 'title') {
+    query = `+intitle:${modifiedRequest}`;
+  }
+  else if (request.body.search[1] === 'author') {
+    query = `+inauthor:${modifiedRequest}`;
+  }
+  return query;
 }
 
 // listener
